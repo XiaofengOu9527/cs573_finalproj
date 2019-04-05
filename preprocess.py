@@ -41,41 +41,29 @@ encoding_cols = ['Nationality', 'Preferred Foot', 'Work Rate',
 # =============================================================================
 
 
-# =============================================================================
-# attri_val = {}
-# attri_numval = {}
-# attri_val_ct = {}
-# 
-# 
-# """ initialize """
-# for attri in encoding_cols:
-#     attri_val[attri] = set()
-#     
-#     
-# """ collect all attribute values """
-# for index, row in data.iterrows():
-#     for attri in encoding_cols:
-#         attri_val[attri].add(row[attri])
-# 
-# 
-# """ sort the values and generate a dict for each value """
-# for attri in encoding_cols:
-#     attri_val[attri] = list(attri_val[attri])
-#     attri_val[attri].sort()
-#     
-#     n_val = len(attri_val[attri])
-#     attri_val_ct[attri] = n_val
-#     
-#     num_val = [x for x in range(n_val)]
-#     
-#     attri_numval[attri] = dict(zip(attri_val[attri], num_val))
-#          
-#     
-# """ convert the attribute to numerical value """
-# for index, row in data.iterrows():
-#     for attri in encoding_cols:
-#         data.loc[index, attri]= attri_numval[attri][row[attri]]
-# =============================================================================
+attri_val = {}
+attri_numval = {}
+
+""" initialize """
+for attri in encoding_cols:
+    attri_val[attri] = set()
+    
+    
+""" collect all attribute values """
+for index, row in data.iterrows():
+    for attri in encoding_cols:
+        attri_val[attri].add(row[attri])
+
+""" sort the values and generate a dict for each value """
+for attri in encoding_cols:
+    attri_val[attri] = list(attri_val[attri])
+    attri_val[attri].sort()
+    attri_numval[attri] = dict(zip(attri_val[attri], range(len(attri_val[attri]))))
+          
+""" convert the attribute to numerical value """
+for index, row in data.iterrows():
+    for attri in encoding_cols:
+        data.loc[index, attri]= int(attri_numval[attri][row[attri]])
 
 
 
@@ -83,7 +71,9 @@ encoding_cols = ['Nationality', 'Preferred Foot', 'Work Rate',
 # =============================================================================
 # one hot encoding (for SVM, KNN, NN)
 # =============================================================================
-data = pd.get_dummies(data, columns=encoding_cols, drop_first=True)
+# =============================================================================
+# data = pd.get_dummies(data, columns=encoding_cols, drop_first=True)
+# =============================================================================
 
 
 
@@ -108,8 +98,7 @@ skills = ['Crossing', 'Finishing', 'HeadingAccuracy','ShortPassing',
 for index, row in data.iterrows():
 	
 	# standardize ['Value', 'Height', 'Weight']
-	value = row['Value']
-	value = value.split('€')[1]
+	value = row['Value'].split('€')[1]
 	
 	if len(value.split('M')[0]) == len(value) - 1:
 		data.at[index, 'Value'] = float(value.split('M')[0])
@@ -153,4 +142,4 @@ for col in skills:
 
 
 
-data.to_csv("data_processed.csv", index=False)
+data.to_csv("data_processed_nbc.csv", index=False)
