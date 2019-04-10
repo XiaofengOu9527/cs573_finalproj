@@ -25,7 +25,7 @@ target_col = ['Value']
 # =============================================================================
 drop_cols = ['Unnamed: 0', 'ID', 'Name', 'Photo', 'Flag', 'Overall', 
 			 'Club Logo', 'Wage', 'Real Face', 'Jersey Number', 
-			 'Joined', 'Loaned From', 'Release Clause']
+			 'Joined', 'Loaned From', 'Release Clause', 'Contract Valid Until']
 
 data = data.drop(drop_cols, axis=1)
 data = data.dropna(axis=0, how='any')
@@ -41,29 +41,29 @@ encoding_cols = ['Nationality', 'Preferred Foot', 'Work Rate',
 # =============================================================================
 
 
-attri_val = {}
-attri_numval = {}
+# attri_val = {}
+# attri_numval = {}
 
-""" initialize """
-for attri in encoding_cols:
-    attri_val[attri] = set()
+# """ initialize """
+# for attri in encoding_cols:
+#     attri_val[attri] = set()
     
     
-""" collect all attribute values """
-for index, row in data.iterrows():
-    for attri in encoding_cols:
-        attri_val[attri].add(row[attri])
+# """ collect all attribute values """
+# for index, row in data.iterrows():
+#     for attri in encoding_cols:
+#         attri_val[attri].add(row[attri])
 
-""" sort the values and generate a dict for each value """
-for attri in encoding_cols:
-    attri_val[attri] = list(attri_val[attri])
-    attri_val[attri].sort()
-    attri_numval[attri] = dict(zip(attri_val[attri], range(len(attri_val[attri]))))
+# """ sort the values and generate a dict for each value """
+# for attri in encoding_cols:
+#     attri_val[attri] = list(attri_val[attri])
+#     attri_val[attri].sort()
+#     attri_numval[attri] = dict(zip(attri_val[attri], range(len(attri_val[attri]))))
           
-""" convert the attribute to numerical value """
-for index, row in data.iterrows():
-    for attri in encoding_cols:
-        data.loc[index, attri]= int(attri_numval[attri][row[attri]])
+# """ convert the attribute to numerical value """
+# for index, row in data.iterrows():
+#     for attri in encoding_cols:
+#         data.loc[index, attri]= int(attri_numval[attri][row[attri]])
 
 
 
@@ -72,7 +72,7 @@ for index, row in data.iterrows():
 # one hot encoding (for SVM, KNN, NN)
 # =============================================================================
 # =============================================================================
-# data = pd.get_dummies(data, columns=encoding_cols, drop_first=True)
+data = pd.get_dummies(data, columns=encoding_cols, drop_first=True)
 # =============================================================================
 
 
@@ -142,4 +142,5 @@ for col in skills:
 
 
 
-data.to_csv("data_processed_nbc.csv", index=False)
+# data.to_csv("data_processed_nbc.csv", index=False)
+data.to_csv("data_processed.csv", index=False)

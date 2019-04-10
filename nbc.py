@@ -17,15 +17,15 @@ other_cols = [col for col in all_cols if col not in target_col]
 data = full_data[other_cols].to_numpy()
 target = full_data[target_col].to_numpy()
 
-
+print(data[123:132,:])
 
 gnb = GaussianNB()
 cnb = ComplementNB()
 mnb = MultinomialNB()
 
-y_gnb_pred = gnb.fit(data, target).predict(data)
-print("GNB: number of mislabeled points out of a total %d points : %d"
-      % (data.shape[0],(target != y_gnb_pred).sum()))
+# y_gnb_pred = gnb.fit(data, target).predict(data)
+# print("GNB: number of mislabeled points out of a total %d points : %d"
+#       % (data.shape[0],(target != y_gnb_pred).sum()))
 
 y_cnb_pred = cnb.fit(data, target).predict(data)
 print("CNB: number of mislabeled points out of a total %d points : %d"
