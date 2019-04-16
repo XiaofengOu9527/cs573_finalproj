@@ -17,8 +17,6 @@ other_cols = [col for col in all_cols if col not in target_col]
 data = full_data[other_cols].to_numpy()
 target = full_data[target_col].to_numpy().squeeze()
 
-print([target.shape, data.shape])
-
 
 
 gnb = GaussianNB()
