@@ -10,6 +10,7 @@ import pandas as pd
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 
 
 arg = sys.argv
@@ -133,20 +134,15 @@ for index, row in data.iterrows():
 data = data.drop(index=idxs_dropped).reset_index(drop=True)
 print('Number of datas after dropping low value rows: {}'.format(data.shape[0]))
 
-plt.hist(VALUE, bins=[0,2,4,6,8,10,15,20,30,40,60,80,120])
-# plt.hist(VALUE, bins='fd')	
-plt.ylabel('frequency')
-plt.show()
-	
-
 
 
 bins = 5
 labels = [1, 2, 3, 4, 5]
 
-val_bins = [0,2,4,6,8,10,15,20,30,40,60,80,120]
+val_bins = [0, 15, 30, 50, 120]
 val_labels = list(np.arange(len(val_bins) - 1) + 1)
-# print(val_labels)
+
+
 for col in discretize_cols:
 	if col != 'Value':
 		data[col] = pd.cut(data[col], bins=bins, labels=labels)
@@ -158,6 +154,41 @@ for col in positions:
 
 for col in skills:
 	data[col] = pd.cut(data[col], bins=[0, 20, 40, 60, 80, 100], labels=labels)
+
+
+
+data_labels = dict.fromkeys(val_labels)
+for key in data_labels.keys():
+    data_labels[key] = []
+
+for index, row in data.iterrows():
+	label = row['Value']
+	data_labels[label].append(index)
+
+sample_labels = dict.fromkeys(val_labels)
+sample_idxs = []
+
+for key in sample_labels.keys():
+	print('number of indices with label {}: {}'.format(str(key), len(data_labels[key])))
+	if len(data_labels[key]) > 1000:
+		sample_labels[key] = random.sample(data_labels[key], 1000)
+	else:
+		sample_labels[key] = list(data_labels[key])
+	print('number of sample indices with label {}: {}'.format(str(key), len(sample_labels[key])))
+
+	sample_idxs = sample_idxs + sample_labels[key]
+
+data = data.iloc[sample_idxs]
+SAMPLE_VALUE = []
+for idx in sample_idxs:
+	SAMPLE_VALUE.append(VALUE[idx])
+
+plt.hist(SAMPLE_VALUE, bins=val_bins)
+# plt.hist(VALUE, bins='fd')	
+plt.ylabel('frequency')
+plt.title('distribution of market values after sample from each interval')
+plt.show()
+
 
 
 if flag == 'nbc':
