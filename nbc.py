@@ -101,8 +101,11 @@ plt.errorbar(range(len(t_fracs)), test_aver_accuracy[2, :], yerr=test_std_error[
 
 
 plt.xticks(range(len(t_fracs)), t_fracs)
+plt.xlabel('fraction of training samples')
+plt.ylabel('accuracy')
 plt.legend()
-plt.show()
+plt.title('Gaussian nbc v.s. Multinomial nbc v.s. Complement nbc')
+plt.savefig('nbc result')
 
 
 
