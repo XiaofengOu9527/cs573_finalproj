@@ -3,6 +3,7 @@ import numpy as np
 import sys
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, ComplementNB
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 
 
 arg = sys.argv
@@ -36,7 +37,20 @@ test_target = test_full_data['Value'].to_numpy()
 
 t_fracs = (0.4, 0.6, 0.8, 1.0)
 random_seeds = np.random.randint(1000, size=10)
+gnb_confusion_mats = np.zeros(shape=(len(t_fracs), len(random_seeds), 4, 4))
+gnb_f1_value = np.zeros(shape=(len(t_fracs), len(random_seeds)))
+gnb_precision = np.zeros(shape=(len(t_fracs), len(random_seeds)))
+gnb_recall = np.zeros(shape=(len(t_fracs), len(random_seeds)))
 
+mnb_confusion_mats = np.zeros(shape=(len(t_fracs), len(random_seeds), 4, 4))
+mnb_f1_value = np.zeros(shape=(len(t_fracs), len(random_seeds)))
+mnb_precision = np.zeros(shape=(len(t_fracs), len(random_seeds)))
+mnb_recall = np.zeros(shape=(len(t_fracs), len(random_seeds)))
+
+cnb_confusion_mats = np.zeros(shape=(len(t_fracs), len(random_seeds), 4, 4))
+cnb_f1_value = np.zeros(shape=(len(t_fracs), len(random_seeds)))
+cnb_precision = np.zeros(shape=(len(t_fracs), len(random_seeds)))
+cnb_recall = np.zeros(shape=(len(t_fracs), len(random_seeds)))
 
 
 train_accuracy = np.zeros(shape=(3, len(t_fracs), len(random_seeds)))
@@ -61,6 +75,12 @@ for i in range(len(t_fracs)):
 
             train_accuracy[0, i, j] = (gnb_train_pred == train_target).sum() / train_data.shape[0]
 
+            gnb_confusion_mats[i, j, :, :] = confusion_matrix(test_target, gnb_test_pred)
+            gnb_f1_value[i, j] = f1_score(test_target, gnb_test_pred, average='weighted')
+            gnb_precision[i, j] = precision_score(test_target, gnb_test_pred, average='weighted')
+            gnb_recall[i, j] = recall_score(test_target, gnb_test_pred, average='weighted')
+
+
             #### Multinomial nbc
             mnb_model = mnb.fit(train_data, train_target)
             mnb_test_pred = mnb_model.predict(test_data)
@@ -69,6 +89,12 @@ for i in range(len(t_fracs)):
             test_accuracy[1, i, j] = (mnb_test_pred == test_target).sum() / test_data.shape[0]
 
             train_accuracy[1, i, j] = (mnb_train_pred == train_target).sum() / train_data.shape[0]
+
+            mnb_confusion_mats[i, j, :, :] = confusion_matrix(test_target, mnb_test_pred)
+            mnb_f1_value[i, j] = f1_score(test_target, mnb_test_pred, average='weighted')
+            mnb_precision[i, j] = precision_score(test_target, mnb_test_pred, average='weighted')
+            mnb_recall[i, j] = recall_score(test_target, mnb_test_pred, average='weighted')
+
 
             #### Complement nbc
             cnb_model = cnb.fit(train_data, train_target)
@@ -79,7 +105,37 @@ for i in range(len(t_fracs)):
 
             train_accuracy[2, i, j] = (cnb_train_pred == train_target).sum() / train_data.shape[0]
 
+            cnb_confusion_mats[i, j, :, :] = confusion_matrix(test_target, cnb_test_pred)
+            cnb_f1_value[i, j] = f1_score(test_target, cnb_test_pred, average='weighted')
+            cnb_precision[i, j] = precision_score(test_target, cnb_test_pred, average='weighted')
+            cnb_recall[i, j] = recall_score(test_target, cnb_test_pred, average='weighted')
 
+
+gnb_confusion_mats = gnb_confusion_mats[3, 0, :, :]
+mnb_confusion_mats = mnb_confusion_mats[3, 0, :, :]
+cnb_confusion_mats = cnb_confusion_mats[3, 0, :, :]
+
+print('confusion matrix for Gaussian NB: ')
+print(gnb_confusion_mats)
+
+print('confusion matrix for Multinomial NB: ')
+print(mnb_confusion_mats)
+
+print('confusion matrix for Complement NB: ')
+print(cnb_confusion_mats)
+
+print('F1 value for Gaussian NB: {}'.format(str(round(gnb_f1_value[3, 0],2))))
+print('F1 value for Multinomial NB: {}'.format(str(round(mnb_f1_value[3, 0],2))))
+print('F1 value for Complement NB: {}'.format(str(round(cnb_f1_value[3, 0],2))))
+
+
+print('Precision value for Gaussian NB: {}'.format(str(round(gnb_precision[3, 0],2))))
+print('Precision value for Multinomial NB: {}'.format(str(round(mnb_precision[3, 0],2))))
+print('Precision value for Complement NB: {}'.format(str(round(cnb_precision[3, 0],2))))
+
+print('Recall value for Gaussian NB: {}'.format(str(round(gnb_recall[3, 0],2))))
+print('Recall value for Multinomial NB: {}'.format(str(round(mnb_recall[3, 0],2))))
+print('Recall value for Complement NB: {}'.format(str(round(cnb_recall[3, 0],2))))
 
 
 train_aver_accuracy = np.mean(train_accuracy, axis=2)
@@ -105,7 +161,7 @@ plt.xlabel('fraction of training samples')
 plt.ylabel('accuracy')
 plt.legend()
 plt.title('Gaussian nbc v.s. Multinomial nbc v.s. Complement nbc')
-plt.savefig('nbc result')
+plt.savefig('nbc results.pdf')
 
 
 

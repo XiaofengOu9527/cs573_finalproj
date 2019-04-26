@@ -186,8 +186,8 @@ for idx in sample_idxs:
 plt.hist(SAMPLE_VALUE, bins=val_bins)
 # plt.hist(VALUE, bins='fd')	
 plt.ylabel('frequency')
-plt.title('distribution of market values after sample from each interval')
-plt.show()
+plt.title('distribution of market values after placing threshold')
+plt.savefig('Data Distribution before threshold.pdf')
 
 
 
